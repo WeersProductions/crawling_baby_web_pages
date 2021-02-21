@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import to_timestamp, month, dayofmonth
 
 
 # If true, the original data is modified before writing back to disk.
@@ -6,9 +7,20 @@ apply_filters = True
 
 
 def Convert(source, destination, filter):
-    # TODO: we should not simply load it.
-    # Right now, 'fetch' is a single column as a struct, we might want to convert it to multiple columns for easier parallel analysis.
     df = spark.read.format("json").load(source)
+    df = df.select(
+        df.url,
+        df.fetch.contentDigest,
+        df.fetch.contentLength,
+        df.fetch.textSize,
+        df.fetch.textQuality,
+        df.fetch.semanticVector,
+        df.history.changeCount,
+        df.history.fetchCount,
+        month(to_timestamp(df.fetch.fetchDate)).alias('fetchMon'),
+        dayofmonth(to_timestamp(df.fetch.fetchDate)).alias('fetchDay'),
+        df.urlViewInfo.numInLinksInt.alias('internalInLinks'),
+        df.urlViewInfo.numInLinksExt.alias('externalInLinks'))
     if apply_filters and filter is not None:
         df = df.filter(filter)
     df.write.parquet(destination)
