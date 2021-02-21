@@ -6,7 +6,7 @@ from pyspark.sql.functions import to_timestamp, month, dayofmonth
 apply_filters = True
 
 
-def Convert(source, destination, filter):
+def Convert(source, destination, filter=None):
     df = spark.read.format("json").load(source)
     df = df.select(
         df.url,
@@ -27,6 +27,23 @@ def Convert(source, destination, filter):
 
 
 if __name__ == "__main__":
+    """
+    Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 converter.py
+    Converts to:
+        root
+        |-- url: string (nullable = true)
+        |-- fetch.contentDigest: string (nullable = true)
+        |-- fetch.contentLength: long (nullable = true)
+        |-- fetch.textSize: long (nullable = true)
+        |-- fetch.textQuality: double (nullable = true)
+        |-- fetch.semanticVector: string (nullable = true)
+        |-- history.changeCount: long (nullable = true)
+        |-- history.fetchCount: long (nullable = true)
+        |-- fetchMon: integer (nullable = true)
+        |-- fetchDay: integer (nullable = true)
+        |-- internalInLinks: string (nullable = true)
+        |-- externalInLinks: string (nullable = true)
+    """
     print("Converting files.")
     spark = SparkSession.builder.getOrCreate()
 
