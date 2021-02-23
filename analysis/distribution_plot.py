@@ -17,8 +17,8 @@ def CreatePath(year, month, day, path_prefix, file_format='.parquet'):
     return path.join(path_prefix, '{0}-{1:02d}-{2:02d}{3}'.format(year, month, day, file_format))
 
 
-def GetDistributionData(spark, initial_time, final_time, path_prefix='/user/s1840495/WebInsight/'):
-    """ Creates the data that can be used to plot distribution of labels.
+def GetLabeledData(spark, initial_time, final_time, path_prefix='/user/s1840495/WebInsight/'):
+    """ Uses final_time to create labels for initial_time.
 
     Args:
         spark (SparkContext):
@@ -32,14 +32,14 @@ def GetDistributionData(spark, initial_time, final_time, path_prefix='/user/s184
     raw_data = spark.read.parquet(initial_path)
     final_df_path = spark.read.parquet(final_path) \
         .where(col('url').isNotNull()) \
-        .where(col('fetch.contentLength') > 0) \
-        .where(col('fetch.fetchDate').isNotNull()) \
+        .where(col('fetch_contentLength') > 0) \
+        .where(col('fetch_fetchDate').isNotNull()) \
         .select(
             'url',
             'fetchMon',
             'fetchDay',
-            'history.changeCount',
-            'history.fetchCount'
+            'history_changeCount',
+            'history_fetchCount'
             ) \
         .where(col('fetchMon') == final_time[0]) \
         .where(col('fetchDay') == final_time[1]) \
@@ -51,8 +51,11 @@ def GetDistributionData(spark, initial_time, final_time, path_prefix='/user/s184
 
 
 if __name__ == "__main__":
+    """
+    Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 analysis/distribution_plot.py
+    """
     print("Starting distribution preparation.")
     spark = SparkSession.builder.getOrCreate()
-    df_labeled = GetDistributionData(spark, (2020, 7, 13), (2020, 9, 14))
+    df_labeled = GetLabeledData(spark, (2020, 7, 13), (2020, 9, 14))
     df_labeled.show()
     print("Finished preparation.")

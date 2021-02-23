@@ -10,13 +10,13 @@ def Convert(spark, source, destination, filter=None):
     df = spark.read.format("json").load(source)
     df = df.select(
         df.url,
-        df.fetch.contentDigest,
-        df.fetch.contentLength,
-        df.fetch.textSize,
-        df.fetch.textQuality,
-        df.fetch.semanticVector,
-        df.history.changeCount,
-        df.history.fetchCount,
+        df.fetch.contentDigest.alias("fetch_contentDigest"),
+        df.fetch.contentLength.alias("fetch_contentLength"),
+        df.fetch.textSize.alias("fetch_textSize"),
+        df.fetch.textQuality.alias("fetch_textQuality"),
+        df.fetch.semanticVector.alias("fetch_semanticVector"),
+        df.history.changeCount.alias("history_changeCount"),
+        df.history.fetchCount.alias("history_fetchCount"),
         month(to_timestamp(df.fetch.fetchDate)).alias('fetchMon'),
         dayofmonth(to_timestamp(df.fetch.fetchDate)).alias('fetchDay'),
         df.urlViewInfo.numInLinksInt.alias('n_internalInLinks'),
@@ -33,7 +33,7 @@ def Convert(spark, source, destination, filter=None):
 
 if __name__ == "__main__":
     """
-    Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 converter.py
+    Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 loading/converter.py
     Converts to:
         root
             |-- url: string (nullable = true)
