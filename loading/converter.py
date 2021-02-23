@@ -36,22 +36,58 @@ if __name__ == "__main__":
     Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 converter.py
     Converts to:
         root
-        |-- url: string (nullable = true)
-        |-- fetch.contentDigest: string (nullable = true)
-        |-- fetch.contentLength: long (nullable = true)
-        |-- fetch.textSize: long (nullable = true)
-        |-- fetch.textQuality: double (nullable = true)
-        |-- fetch.semanticVector: string (nullable = true)
-        |-- history.changeCount: long (nullable = true)
-        |-- history.fetchCount: long (nullable = true)
-        |-- fetchMon: integer (nullable = true)
-        |-- fetchDay: integer (nullable = true)
-        |-- internalInLinks: string (nullable = true)
-        |-- externalInLinks: string (nullable = true)
+            |-- url: string (nullable = true)
+            |-- fetch.contentDigest: string (nullable = true)
+            |-- fetch.contentLength: long (nullable = true)
+            |-- fetch.textSize: long (nullable = true)
+            |-- fetch.textQuality: double (nullable = true)
+            |-- fetch.semanticVector: string (nullable = true)
+            |-- history.changeCount: long (nullable = true)
+            |-- history.fetchCount: long (nullable = true)
+            |-- fetchMon: integer (nullable = true)
+            |-- fetchDay: integer (nullable = true)
+            |-- n_internalInLinks: string (nullable = true)
+            |-- n_externalInLinks: string (nullable = true)
+            |-- n_internalOutLinks: integer (nullable = true)
+            |-- n_externalOutLinks: integer (nullable = true)
+            |-- internalOutLinks: array (nullable = true)
+            |    |-- element: struct (containsNull = true)
+            |    |    |-- linkInfo: struct (nullable = true)
+            |    |    |    |-- linkQuality: double (nullable = true)
+            |    |    |    |-- linkRels: array (nullable = true)
+            |    |    |    |    |-- element: string (containsNull = true)
+            |    |    |    |-- linkType: string (nullable = true)
+            |    |    |    |-- text: string (nullable = true)
+            |    |    |-- targetUrl: string (nullable = true)
+            |-- externalOutLinks: array (nullable = true)
+            |    |-- element: struct (containsNull = true)
+            |    |    |-- linkInfo: struct (nullable = true)
+            |    |    |    |-- linkQuality: double (nullable = true)
+            |    |    |    |-- linkRels: array (nullable = true)
+            |    |    |    |    |-- element: string (containsNull = true)
+            |    |    |    |-- linkType: string (nullable = true)
+            |    |    |    |-- text: string (nullable = true)
+            |    |    |-- targetUrl: string (nullable = true)
     """
     print("Converting files.")
     spark = SparkSession.builder.getOrCreate()
+    to_be_converted = [
+        (2020, 7, 13),
+        (2020, 7, 21),
+        (2020, 7, 28),
+        (2020, 8, 7),
+        (2020, 8, 11),
+        (2020, 8, 18),
+        (2020, 8, 27),
+        (2020, 9, 1),
+        (2020, 9, 7),
+        (2020, 9, 14)
+    ]
 
-    Convert(spark, "/data/doina/WebInsight/2020-07-13", "/user/s1840495/WebInsight/2020-07-13.parquet")
+    for fetch_time in to_be_converted:
+        path = "/WebInsight/{0}-{1:02d}-{2:02d}".format(fetch_time[0], fetch_time[1], fetch_time[2])
+        source_path = "/data/doina{0}".format(path)
+        destination_path = "/user/s1840495{0}{1}".format(path, '.parquet')
+        Convert(spark, source_path, destination_path)
 
     print("Finished converting.")
