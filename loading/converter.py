@@ -1,12 +1,12 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import to_timestamp, month, dayofmonth
+from pyspark.sql.functions import to_timestamp, month, dayofmonth, size
 
 
 # If true, the original data is modified before writing back to disk.
 apply_filters = True
 
 
-def Convert(source, destination, filter=None):
+def Convert(spark, source, destination, filter=None):
     df = spark.read.format("json").load(source)
     df = df.select(
         df.url,
@@ -19,11 +19,16 @@ def Convert(source, destination, filter=None):
         df.history.fetchCount,
         month(to_timestamp(df.fetch.fetchDate)).alias('fetchMon'),
         dayofmonth(to_timestamp(df.fetch.fetchDate)).alias('fetchDay'),
-        df.urlViewInfo.numInLinksInt.alias('internalInLinks'),
-        df.urlViewInfo.numInLinksExt.alias('externalInLinks'))
+        df.urlViewInfo.numInLinksInt.alias('n_internalInLinks'),
+        df.urlViewInfo.numInLinksExt.alias('n_externalInLinks'),
+        size(df.fetch.internalLinks).alias('n_internalOutLinks'),
+        size(df.fetch.externalLinks).alias('n_externalOutLinks'),
+        df.fetch.internalLinks.alias('internalOutLinks'),
+        df.fetch.externalLinks.alias('externalOutLinks'),
+        )
     if apply_filters and filter is not None:
         df = df.filter(filter)
-    df.write.parquet(destination)
+    df.write.mode("overwrite").parquet(destination)
 
 
 if __name__ == "__main__":
@@ -47,6 +52,6 @@ if __name__ == "__main__":
     print("Converting files.")
     spark = SparkSession.builder.getOrCreate()
 
-    Convert("/data/doina/WebInsight/2020-07-13", "/user/s1840495/WebInsight/2020-07-13.parquet")
+    Convert(spark, "/data/doina/WebInsight/2020-07-13", "/user/s1840495/WebInsight/2020-07-13.parquet")
 
     print("Finished converting.")
