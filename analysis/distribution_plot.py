@@ -39,6 +39,7 @@ def GetLabeledData(spark, initial_time, final_time, path_prefix='/user/s1840495/
         .where(col('url').isNotNull()) \
         .where(col('fetch_contentLength') > 0) \
         .where(col('fetchMon').isNotNull()) \
+        .where(col('history_fetchCount') == 10) \
         .select(
             'url',
             'fetchMon',
