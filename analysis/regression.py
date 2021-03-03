@@ -202,6 +202,8 @@ def get_feature_importance(model, prediction_df, feature_col):
 if __name__ == "__main__":
     """
     Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 analysis/regression.py
+
+    Be sure to first run the 'analysis_pipeline.py' python script (this prepares the data that this regression relies on).
     """
 
     print("Starting analysis.")

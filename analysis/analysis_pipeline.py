@@ -83,6 +83,8 @@ def main(argv):
     Run using: python <project_name>/analysis/analysis_pipeline.py
     In my case: python WebInsight/analysis/analysis_pipeline.py
 
+    Note: This uses .parquet files that are created by loading/converter.py. Be sure to run that first. In case you want to, you can build a check at the start of this script to verify that people ran the converter :)
+
     Args:
         No args required. Script path is used to make sure resulting files are correctly placed in the file system from the caller's perspective.
     """
