@@ -74,14 +74,13 @@ if __name__ == "__main__":
     print("Starting distribution preparation.")
     spark = SparkSession.builder.getOrCreate()
     df_labeled = GetLabeledData(spark, (2020, 7, 13), (2020, 9, 14))
+    df_labeled.write.mode('overwrite').parquet('WebInsight/analysis/result/labeled_07-13_09-14.parquet')
     df_labeled.show()
 
     labelDistribution = GetLabelDistribution(spark, df_labeled)
-    labelDistribution.show()
     labelDistribution.write.mode('overwrite').parquet('WebInsight/analysis/result/labelDistribution.parquet')
 
     fetchDistribution = GetFetchDistribution(spark, df_labeled)
-    fetchDistribution.show()
     fetchDistribution.write.mode('overwrite').parquet('WebInsight/analysis/result/fetchDistribution.parquet')
 
     print("Finished preparation.")

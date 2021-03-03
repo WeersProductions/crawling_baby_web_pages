@@ -79,6 +79,13 @@ def run_pipeline(script_location, project_base_path, user):
 
 
 def main(argv):
+    """
+    Run using: python <project_name>/analysis/analysis_pipeline.py
+    In my case: python WebInsight/analysis/analysis_pipeline.py
+
+    Args:
+        No args required. Script path is used to make sure resulting files are correctly placed in the file system from the caller's perspective.
+    """
     PROJECT_BASE_PATH = "WebInsight"
     USER = "s1840495"
 

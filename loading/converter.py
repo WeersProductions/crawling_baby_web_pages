@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import to_timestamp, month, dayofmonth, size
+from pyspark.sql.types import IntegerType
 
 
 # If true, the original data is modified before writing back to disk.
@@ -19,8 +20,8 @@ def Convert(spark, source, destination, filter=None):
         df.history.fetchCount.alias("history_fetchCount"),
         month(to_timestamp(df.fetch.fetchDate)).alias('fetchMon'),
         dayofmonth(to_timestamp(df.fetch.fetchDate)).alias('fetchDay'),
-        df.urlViewInfo.numInLinksInt.alias('n_internalInLinks'),
-        df.urlViewInfo.numInLinksExt.alias('n_externalInLinks'),
+        df.urlViewInfo.numInLinksInt.cast(IntegerType()).alias('n_internalInLinks'),
+        df.urlViewInfo.numInLinksExt.cast(IntegerType()).alias('n_externalInLinks'),
         size(df.fetch.internalLinks).alias('n_internalOutLinks'),
         size(df.fetch.externalLinks).alias('n_externalOutLinks'),
         df.fetch.internalLinks.alias('internalOutLinks'),
@@ -34,20 +35,21 @@ def Convert(spark, source, destination, filter=None):
 if __name__ == "__main__":
     """
     Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 loading/converter.py
+    If you're running a lot of files, memory limit might be a problem. Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 --driver-memory 4G --executor-memory 4G loading/converter.py
     Converts to:
         root
             |-- url: string (nullable = true)
-            |-- fetch.contentDigest: string (nullable = true)
-            |-- fetch.contentLength: long (nullable = true)
-            |-- fetch.textSize: long (nullable = true)
-            |-- fetch.textQuality: double (nullable = true)
-            |-- fetch.semanticVector: string (nullable = true)
-            |-- history.changeCount: long (nullable = true)
-            |-- history.fetchCount: long (nullable = true)
+            |-- fetch_contentDigest: string (nullable = true)
+            |-- fetch_contentLength: long (nullable = true)
+            |-- fetch_textSize: long (nullable = true)
+            |-- fetch_textQuality: double (nullable = true)
+            |-- fetch_semanticVector: string (nullable = true)
+            |-- history_changeCount: long (nullable = true)
+            |-- history_fetchCount: long (nullable = true)
             |-- fetchMon: integer (nullable = true)
             |-- fetchDay: integer (nullable = true)
-            |-- n_internalInLinks: string (nullable = true)
-            |-- n_externalInLinks: string (nullable = true)
+            |-- n_internalInLinks: integer (nullable = true)
+            |-- n_externalInLinks: integer (nullable = true)
             |-- n_internalOutLinks: integer (nullable = true)
             |-- n_externalOutLinks: integer (nullable = true)
             |-- internalOutLinks: array (nullable = true)

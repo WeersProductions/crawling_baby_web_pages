@@ -10,7 +10,7 @@ def PlotDistribution(x, y, y_scale='log', labels=("x", "y")):
     ax.set_yscale(y_scale)
     ax.set_ylabel(labels[1])
     ax.set_xlabel(labels[0])
-    # fig.canvas.draw()
+    fig.canvas.draw()
 
 
 def PrepareLabels(points):
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         open("analysis/local/labelDistribution.pickle", "rb"), encoding='latin1')
     label_distribution_points = np.array(label_distribution['data_points'])
     x, y = PrepareLabels(label_distribution_points)
-    PlotDistribution(x, y, labels=("changeCount", "occurences"))
+    PlotDistribution(x, y, y_scale='linear', labels=("changeCount", "occurences"))
     PlotDistribution(x, ToPercentages(y), y_scale='linear', labels=("changeCount", "occurenceRatio"))
     plt.show()
 

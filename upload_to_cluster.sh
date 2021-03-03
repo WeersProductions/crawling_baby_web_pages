@@ -9,6 +9,7 @@
 USER="s1840495"
 TARGET_FOLDER="WebInsight"
 
+scp ./analysis/regression.py ${USER}@ctit016.ewi.utwente.nl:${TARGET_FOLDER}/analysis/
 scp ./analysis/distribution_plot.py ${USER}@ctit016.ewi.utwente.nl:${TARGET_FOLDER}/analysis/
 scp ./analysis/analysis_pipeline.py ${USER}@ctit016.ewi.utwente.nl:${TARGET_FOLDER}/analysis/
 scp ./loading/converter.py ${USER}@ctit016.ewi.utwente.nl:${TARGET_FOLDER}/loading/
