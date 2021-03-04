@@ -1,5 +1,5 @@
 ```
-hdfs dfs -text /xx/xx/2020-07-13/1M.2020-07-13-aa.gz | head -1
+hdfs dfs -text /data/doina/WebInsight/2020-07-13/1M.2020-07-13-aa.gz | head -1
 ```
 
 Schema:
