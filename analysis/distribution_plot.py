@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, array_except, size
 from os import path
 
 
@@ -45,14 +45,18 @@ def GetLabeledData(spark, initial_time, final_time, path_prefix='/user/s1840495/
             'fetchMon',
             'fetchDay',
             'history_changeCount',
-            'history_fetchCount'
+            'history_fetchCount',
+            col('internalOutLinks.targetUrl').alias('finalInternalOutLinks'),
+            col('externalOutLinks.targetUrl').alias('finalExternalOutLinks')
             ) \
         .where(col('fetchMon') == final_time[1]) \
         .where(col('fetchDay') == final_time[2]) \
         .drop('fetchMon') \
         .drop('fetchDay')
 
-    df = initial_data.join(final_data, on='url', how='inner')
+    df = initial_data.join(final_data, on='url', how='inner') \
+        .withColumn('diffExternalOutLinks', size(array_except("finalExternalOutLinks", "externalOutLinks.targetUrl"))) \
+        .withColumn('diffInternalOutLinks', size(array_except("finalInternalOutLinks", "internalOutLinks.targetUrl")))
     print("Finished GetLabeledData")
     return df
 

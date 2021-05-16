@@ -6,8 +6,8 @@
 Loads the raw `.json` files and converts them into `.parquet` files. Selects and computes some properties. Schema can be found in `loading/converter.py`.
 
 ### analysis/
-Contains code to analyze the processed `.parquet` files.
-`distribution_plot.py` will join on a label <todo/>.
+Contains code to analyze the processed `.parquet` files and to add labels to it for a specified date combination.
+`distribution_plot.py` joins with a label, look into the folder for the readme.md for more information.
 
 ## Developer work flow
 Edit files in the repository.
