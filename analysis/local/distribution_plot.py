@@ -1,4 +1,5 @@
 import pickle
+from typing import List
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -36,15 +37,22 @@ def ToPercentages(y):
     return y
 
 
+def plotDistribution(pickle_file: str, x_label: str, y_label: str, y_label_percentage: str):
+    label_distribution = pickle.load(
+        open(pickle_file, "rb"), encoding='latin1')
+    label_distribution_points = np.array(label_distribution['data_points'])
+    x, y = PrepareLabels(label_distribution_points)
+    PlotDistribution(x, y, y_scale='linear', labels=(x_label, y_label))
+    PlotDistribution(x, ToPercentages(y), y_scale='linear', labels=(x_label, y_label_percentage))
+    plt.show()
+
+
+
 if __name__ == "__main__":
     print("Start plotting distribution.")
 
-    label_distribution = pickle.load(
-        open("analysis/local/labelDistribution.pickle", "rb"), encoding='latin1')
-    label_distribution_points = np.array(label_distribution['data_points'])
-    x, y = PrepareLabels(label_distribution_points)
-    PlotDistribution(x, y, y_scale='linear', labels=("changeCount", "occurences"))
-    PlotDistribution(x, ToPercentages(y), y_scale='linear', labels=("changeCount", "occurenceRatio"))
-    plt.show()
+    plotDistribution("analysis/local/labelDistribution.pickle", x_label="changeCount", y_label="occurences", y_label_percentage="occurenceRatio")
+    plotDistribution("analysis/local/diffExternalOutLinksDistribution.pickle", x_label="diff external out links", y_label="occurences", y_label_percentage="occurenceRatio")
+    plotDistribution("analysis/local/diffInternalOutLinksDistribution.pickle", x_label="diff internal out links", y_label="occurences", y_label_percentage="occurenceRatio")
 
     print("End plotting.")

@@ -71,9 +71,26 @@ def GetFetchDistribution(spark, labeledData):
     return fetchDistribution
 
 
+def GetDiffExternalOutDistribution(spark, labeledData):
+    diffExternalOutLinks = labeledData.groupBy(col('diffExternalOutLinks')).count()
+    return diffExternalOutLinks
+
+
+def GetDiffInternalOutDistribution(spark, labeledData):
+    diffInternalOutLinks = labeledData.groupBy(col('diffInternalOutLinks')).count()
+    return diffInternalOutLinks
+
+
 if __name__ == "__main__":
     """
     Run using: spark-submit --master yarn --deploy-mode cluster --conf spark.dynamicAllocation.maxExecutors=20 --conf spark.yarn.maxAppAttempts=1 analysis/distribution_plot.py
+
+    Outputs 5 parquet files:
+    - WebInsight/analysis/result/labeled_07-13_09-14.parquet
+    - WebInsight/analysis/result/labelDistribution.parquet
+    - WebInsight/analysis/result/fetchDistribution.parquet
+    - WebInsight/analysis/result/diffExternalOutLinksDistribution.parquet
+    - WebInsight/analysis/result/diffInternalOutLinksDistribution.parquet
     """
     print("Starting distribution preparation.")
     spark = SparkSession.builder.getOrCreate()
@@ -86,5 +103,11 @@ if __name__ == "__main__":
 
     fetchDistribution = GetFetchDistribution(spark, df_labeled)
     fetchDistribution.write.mode('overwrite').parquet('WebInsight/analysis/result/fetchDistribution.parquet')
+
+    diffExternalOutLinksDistribution = GetDiffExternalOutDistribution(spark, df_labeled)
+    diffExternalOutLinksDistribution.write.mode('overwrite').parquet('WebInsight/analysis/result/diffExternalOutLinksDistribution.parquet')
+
+    diffInternalOutLinksDistribution = GetDiffInternalOutDistribution(spark, df_labeled)
+    diffInternalOutLinksDistribution.write.mode('overwrite').parquet('WebInsight/analysis/result/diffInternalOutLinksDistribution.parquet')
 
     print("Finished preparation.")

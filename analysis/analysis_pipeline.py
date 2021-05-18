@@ -74,6 +74,8 @@ def run_pipeline(script_location, project_base_path, user):
     # spark-submit <PROJECT_NAME>/util/parquet_file_to_pickle.py "A FILE PATH"
     _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/labelDistribution.parquet")], cwd=os.path.join("/home/", user))
     _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/fetchDistribution.parquet")], cwd=os.path.join("/home/", user))
+    _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/diffExternalOutLinksDistribution.parquet")], cwd=os.path.join("/home/", user))
+    _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/diffInternalOutLinksDistribution.parquet")], cwd=os.path.join("/home/", user))
 
     return (True, "Yay!")
 
@@ -95,7 +97,7 @@ def main(argv):
     print("Starting pipeline.")
     success, reason = run_pipeline(argv[0], PROJECT_BASE_PATH, USER)
     if not success:
-        print("Failed to run completely:", reason)
+        print("Failed to run:", reason)
     print("Finished pipeline.")
 
 

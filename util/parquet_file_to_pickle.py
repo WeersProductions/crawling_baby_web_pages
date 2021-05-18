@@ -21,10 +21,9 @@ if __name__ == "__main__":
         else:
             target = argv[1][:-8] + ".pickle"  # Remove .parquet add .pickle
 
-        all_data = np.array(df.collect())
         pickle_data = {
             "column_names": df.columns,
-            "data_points": all_data
+            "data_points": np.array(df.collect())
         }
 
         pickle.dump(pickle_data, open(target, "wb"))
