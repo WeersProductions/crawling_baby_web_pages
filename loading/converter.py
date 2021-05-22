@@ -86,6 +86,13 @@ if __name__ == "__main__":
         (2020, 9, 14)
     ]
 
+    # NOTE: the following was done manually:
+    """
+        hdfs dfs -mv WebInsight/2020-07-21.parquet WebInsight/2020-07-20.parquet
+        hdfs dfs -mv WebInsight/2020-08-07.parquet WebInsight/2020-08-06.parquet
+        hdfs dfs -mv WebInsight/2020-08-18.parquet WebInsight/2020-08-17.parquet
+    """
+
     for fetch_time in to_be_converted:
         path = "/WebInsight/{0}-{1:02d}-{2:02d}".format(fetch_time[0], fetch_time[1], fetch_time[2])
         source_path = "/data/doina{0}".format(path)

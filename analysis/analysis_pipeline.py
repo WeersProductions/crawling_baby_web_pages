@@ -21,7 +21,7 @@ def run_cmd(args_list, cwd=None):
     proc = subprocess.Popen(args_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
     (output, errors) = proc.communicate()
     if proc.returncode:
-            raise RuntimeError('Error run_cmd: ' + errors)
+            raise RuntimeError('Error run_cmd: ' + errors + '; \n output: ' + output)
     return (output, errors)
 
 
@@ -76,6 +76,7 @@ def run_pipeline(script_location, project_base_path, user):
     _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/fetchDistribution.parquet")], cwd=os.path.join("/home/", user))
     _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/diffExternalOutLinksDistribution.parquet")], cwd=os.path.join("/home/", user))
     _, _ = run_cmd(["spark-submit", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/diffInternalOutLinksDistribution.parquet")], cwd=os.path.join("/home/", user))
+    # _, _ = run_cmd(["spark-submit", "--conf", "spark.kryoserializer.buffer.max=512m", "--executor-memory", "7g", "--driver-memory", "7g", os.path.join(project_base_path, "util/parquet_file_to_pickle.py"), os.path.join(project_base_path, "analysis/result/web_timeseries.parquet")], cwd=os.path.join("/home/", user))
 
     return (True, "Yay!")
 

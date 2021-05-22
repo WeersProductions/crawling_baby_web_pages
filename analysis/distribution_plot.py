@@ -2,6 +2,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, array_except, size
 from os import path
 
+"""
+This file is responsible for creating data that can be used to create distibution plots.
+"""
 
 def CreatePath(year, month, day, path_prefix, file_format='.parquet'):
     """ Create a path from the day and month components.

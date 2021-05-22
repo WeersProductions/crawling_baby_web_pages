@@ -184,7 +184,6 @@ def random_forest_regressor(spark, original_label_col, feature_col_names):
     return run_model(spark, original_label_col, label_col, vector_col, feature_col_names, dt, [evaluator_mae, evaluator_r2, evaluator_rmse])
 
 
-
 def get_feature_importance(model, prediction_df, feature_col):
     """
     Calculate the importance score of each feature.

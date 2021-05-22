@@ -47,7 +47,6 @@ def plotDistribution(pickle_file: str, x_label: str, y_label: str, y_label_perce
     plt.show()
 
 
-
 if __name__ == "__main__":
     print("Start plotting distribution.")
 
